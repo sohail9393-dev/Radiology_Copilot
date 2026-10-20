@@ -1,0 +1,18 @@
+# Secrets -- never bake into an image
+.env
+.env.*
+!.env.example
+
+# Environments, caches, data
+.venv
+__pycache__
+*.pyc
+archive (4)
+chroma_store
+knowledge_base
+*.ipynb
+.vscode
+.git
+# Deployment artifacts and patch backups are not part of any image.
+aws-deploy
+*.dsh-backup

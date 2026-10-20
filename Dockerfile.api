@@ -1,0 +1,38 @@
+# Radiology Copilot - FastAPI inference + agent pipeline
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    HOME=/home/app
+
+# Run as a non-root user.
+RUN useradd --create-home --uid 1000 app
+WORKDIR /app
+
+# CPU-only PyTorch (much smaller than the default CUDA build; DenseNet121 at
+# 224px runs fine on CPU). Installed first so it caches as its own layer.
+RUN pip install torch==2.14.0 torchvision==0.29.0 \
+    --index-url https://download.pytorch.org/whl/cpu
+
+COPY requirements-api.txt .
+RUN pip install -r requirements-api.txt
+
+USER app
+
+# Bake model weights into the image so containers start fast and don't need
+# internet access to download them at startup.
+RUN python -c "import torchxrayvision as xrv; xrv.models.DenseNet(weights='densenet121-res224-all')" \
+ && python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+
+COPY --chown=app:app database.py evidence_agent.py planner_agent_groq.py \
+     correlation_agent_groq.py critic_agent.py synthesis_agent.py llm_utils.py \
+     xray_api.py ./
+
+EXPOSE 8000
+
+# One worker: each worker would load its own copy of the model into memory.
+CMD ["uvicorn", "xray_api:app", "--host", "0.0.0.0", "--port", "8000"]
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=3 \
+  CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4).status == 200 else 1)"

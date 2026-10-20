@@ -1,0 +1,15 @@
+# API dependencies (versions match the local .venv).
+# torch/torchvision are installed from the CPU wheel index in Dockerfile.api;
+# the pins below are still satisfied by the "+cpu" builds.
+torch==2.14.0
+torchvision==0.29.0
+torchxrayvision==1.5.4
+scikit-image==0.26.0
+numpy==2.4.6
+fastapi==0.141.1
+uvicorn==0.52.4
+python-multipart==0.0.32
+mysql-connector-python==26.7.0
+python-dotenv==1.2.3
+groq==1.7.0
+sentence-transformers==6.0.1

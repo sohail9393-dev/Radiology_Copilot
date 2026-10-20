@@ -1,0 +1,17 @@
+[
+  {
+    "file": "pneumonia.txt",
+    "pathology": "Pneumonia",
+    "source": "https://mobile.fpnotebook.com/Lung/Rad/ChstXryInPnmn.htm"
+  },
+  {
+    "file": "cardiomegaly.txt",
+    "pathology": "Cardiomegaly",
+    "source": "https://radiopaedia.org/articles/cardiomegaly (CC BY-NC-SA)"
+  },
+  {
+    "file": "nodule.txt",
+    "pathology": "Nodule",
+    "source": "https://radiopaedia.org/articles/pulmonary-nodule (CC BY-NC-SA)"
+  }
+]

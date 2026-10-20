@@ -1,0 +1,36 @@
+# CodeBuild spec: build and push both images to ECR from source.
+#
+# Use this if you do not want to install Docker locally. Set these environment
+# variables on the CodeBuild project:
+#
+#   AWS_ACCOUNT_ID   your 12-digit account id
+#   AWS_DEFAULT_REGION   e.g. us-east-1
+#
+# and give the CodeBuild service role the AmazonEC2ContainerRegistryPowerUser policy.
+#
+# Privileged mode IS required (this builds Docker images).
+
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "Logging in to ECR..."
+      - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
+      - REPO_URI="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
+      - echo "Repo URI $REPO_URI"
+
+  build:
+    commands:
+      # linux/amd64 to match the ECS task definition's X86_64 runtime platform.
+      - echo "Building API image..."
+      - docker build --platform linux/amd64 -f Dockerfile.api -t "$REPO_URI/rc-api:latest" .
+      - echo "Building UI image..."
+      - docker build --platform linux/amd64 -f Dockerfile.ui -t "$REPO_URI/rc-ui:latest" .
+
+  post_build:
+    commands:
+      - echo "Pushing images..."
+      - docker push "$REPO_URI/rc-api:latest"
+      - docker push "$REPO_URI/rc-ui:latest"
+      - echo "Build complete."

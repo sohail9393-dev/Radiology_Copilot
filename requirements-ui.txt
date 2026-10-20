@@ -1,0 +1,4 @@
+# Streamlit UI dependencies (versions match the local .venv).
+streamlit==1.63.0
+requests==2.34.2
+pillow==12.3.0
