@@ -15,7 +15,7 @@ import requests
 import streamlit as st
 from PIL import Image
 
-# In Docker/AWS this is set to the API service's address (e.g. http://api:8000).
+# Set API_BASE_URL to point at a remote API (e.g. a deployed API address).
 # Falls back to localhost so local development works unchanged.
 API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
 API_URL = f"{API_BASE_URL}/analyze-xray"

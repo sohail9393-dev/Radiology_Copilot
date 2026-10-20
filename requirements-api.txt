@@ -1,6 +1,6 @@
 # API dependencies (versions match the local .venv).
-# torch/torchvision are installed from the CPU wheel index in Dockerfile.api;
-# the pins below are still satisfied by the "+cpu" builds.
+# torch/torchvision come from the CPU wheel index
+# (https://download.pytorch.org/whl/cpu); the pins below are "+cpu" builds.
 torch==2.14.0
 torchvision==0.29.0
 torchxrayvision==1.5.4
